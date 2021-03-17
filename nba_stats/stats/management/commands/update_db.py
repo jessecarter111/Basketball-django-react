@@ -13,10 +13,10 @@ class Command(BaseCommand):
                   'Charlotte Hornets': 'CHO', 'Chicago Bulls': 'CHI', 'Cleveland Cavaliers': 'CLE',
                   'Dallas Mavericks': 'DAL', 'Denver Nuggets': 'DEN', 'Detroit Pistons': 'DET',
                   'Golden State Warriors': 'GSW', 'Houston Rockets': 'HOU', 'Indiana Pacers': 'IND',
-                  'LA Clippers': 'LAC', 'LA Lakers': 'LAL', 'Memphis Grizzlies': 'MEM',
+                  'Los Angeles Clippers': 'LAC', 'Los Angeles Lakers': 'LAL', 'Memphis Grizzlies': 'MEM',
                   'Miami Heat': 'MIA', 'Milwaukee Bucks': 'MIL', 'Minnesota Timberwolves': 'MIN',
                   'New Orleans Pelicans': 'NOP', 'New York Knicks': 'NYK', 'Oklahoma City Thunder': 'OKC',
-                  'Orlando Magic': 'ORL', 'Philadelphia Sixers': 'PHI', 'Phoenix Suns': 'PHX',
+                  'Orlando Magic': 'ORL', 'Philadelphia 76ers': 'PHI', 'Phoenix Suns': 'PHX',
                   'Portland Trail Blazers': 'POR', 'Sacramento Kings': 'SAC', 'San Antonio Spurs': 'SAS',
                   'Toronto Raptors': 'TOR', 'Utah Jazz': 'UTA', 'Washington Wizards': 'WAS'}
 
@@ -24,6 +24,8 @@ class Command(BaseCommand):
         # pulls all individual players stats from the 2020 season from bball-reference
         self.populate_teams()
         self.populate_players()
+        Player.objects.refresh_from_db()
+        Team.objects.refresh_from_db()
 
     def populate_players(self):
         data = self.scrape_players()

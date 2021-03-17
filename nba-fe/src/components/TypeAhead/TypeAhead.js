@@ -15,16 +15,15 @@ const TypeAhead = ({TeamData, PlayerData, handleSelect}) => {
         const matchesValue = team.team_name.toLowerCase().match(rgx);
         return hasEnteredEnoughCharacters && matchesValue;
     })
-    const shouldShowTeamSuggestions = teamSuggestions.length > 0 && isVisible;
 
     const playerSuggestions = PlayerData.filter(player => {
         const hasEnteredEnoughCharacters = searchTerm.length >= 2;
         const matchesValue = player.player_name.toLowerCase().match(rgx);
         return hasEnteredEnoughCharacters && matchesValue;
     })
-    const shouldShowPlayerSuggestions = playerSuggestions.length > 0 && isVisible;
     
     const totalSuggestions = teamSuggestions.concat(playerSuggestions)
+    const shouldShowSuggestions = totalSuggestions.length > 0 && isVisible
     const numSuggestions = totalSuggestions.length - 1
 
     const selectedSuggestion = 
@@ -32,7 +31,6 @@ const TypeAhead = ({TeamData, PlayerData, handleSelect}) => {
         ? teamSuggestions[selectedSuggestionIndex]
         : playerSuggestions[selectedSuggestionIndex - teamSuggestions.length]
         
-
     return (
         <Wrapper>
             <Row>
@@ -105,90 +103,42 @@ const TypeAhead = ({TeamData, PlayerData, handleSelect}) => {
                 </ClearButton>
             </Row>
 
-            {(shouldShowPlayerSuggestions || shouldShowTeamSuggestions) && (
+            {(shouldShowSuggestions) && (
                 <Suggestions id='results'>
-                    
                     {totalSuggestions.map((suggestion, index) => {
                         const isSelected = index === selectedSuggestionIndex;
-                        /* This is super ugly and needs to be turned into a seperate function 
-                        but it's good enough for now. Currently only deals with 2 types of models,
-                        (Teams and Players) but will be expanding later*/
-                        if (index === 0) {
+                        suggestion = (<Suggestion
+                            key={suggestion.id}
+                            suggestion={suggestion}
+                            index={index}
+                            isSelected={isSelected}
+                            searchValue={searchTerm}
+                            onMouseEnter={() => {
+                                setSelectedSuggestionIndex(index);
+                            }}
+                            onMouseDown={() => {
+                                handleSelect(suggestion.team_name);
+                            }}
+                        />)
+                        if (teamSuggestions && index === 0) {
                             return (
-                            <>
-                            <dt>Teams</dt>
-                            <Suggestion
-                                key={suggestion.id}
-                                suggestion={suggestion}
-                                type="team"
-                                index={index}
-                                isSelected={isSelected}
-                                searchValue={searchTerm}
-                                onMouseEnter={() => {
-                                    setSelectedSuggestionIndex(index);
-                                }}
-                                onMouseDown={() => {
-                                    handleSelect(suggestion.team_name);
-                                }}
-                            />
-                            </>
+                                <>
+                                <dt>Teams</dt>
+                                {suggestion}
+                                </>
                             )
-                        } else if (index > 0 && index < teamSuggestions.length) {
+                        } else if (playerSuggestions && index === teamSuggestions.length) {
                             return (
-                                <Suggestion
-                                    key={suggestion.id}
-                                    suggestion={suggestion}
-                                    type="team"
-                                    index={index}
-                                    isSelected={isSelected}
-                                    searchValue={searchTerm}
-                                    onMouseEnter={() => {
-                                        setSelectedSuggestionIndex(index);
-                                    }}
-                                    onMouseDown={() => {
-                                        handleSelect(suggestion.team_name);
-                                    }}
-                                />
-                            )
-                        } else if (index === teamSuggestions.length) {
-                            return (
-                            <>
-                            <dt>Players</dt>
-                                <Suggestion
-                                    key={suggestion.id}
-                                    suggestion={suggestion}
-                                    type="player"
-                                    index={index}
-                                    isSelected={isSelected}
-                                    searchValue={searchTerm}
-                                    onMouseEnter={() => {
-                                        setSelectedSuggestionIndex(index);
-                                    }}
-                                    onMouseDown={() => {
-                                        handleSelect(suggestion.player_name);
-                                    }}
-                                />
-                            </>
-                            )
+                                <>
+                                <dt>Players</dt>
+                                {suggestion}
+                                </>
+                            ) 
                         } else {
                             return (
-                            <Suggestion
-                                key={suggestion.id}
-                                suggestion={suggestion}
-                                type="player"
-                                index={index}
-                                isSelected={isSelected}
-                                searchValue={searchTerm}
-                                onMouseEnter={() => {
-                                    setSelectedSuggestionIndex(index);
-                                }}
-                                onMouseDown={() => {
-                                    handleSelect(suggestion.player_name);
-                                }}
-                            />
+                                suggestion
                             )
                         }
-                        
                     })}
                 </Suggestions>
             )}

@@ -18,6 +18,7 @@ class Team(models.Model):
     division = models.IntegerField()
     conference = models.IntegerField()
     championships = models.IntegerField()
+    model_type = models.CharField(default="team", max_length=50)
 
     def __str__(self) -> str:
         return self.team_name
@@ -75,6 +76,7 @@ class Player(models.Model):
     turnovers = models.DecimalField(max_digits=4, decimal_places=2, default=0)
     # Personal Fouls
     pers_fouls = models.DecimalField(max_digits=4, decimal_places=2, default=0)
+    model_type = models.CharField(default="player", max_length=50)
 
     def __str__(self) -> str:
         return self.player_name

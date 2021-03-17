@@ -3,32 +3,21 @@ import styled from 'styled-components';
 
 const Suggestion = ({
     searchValue,
-    suggestion,
-    type, 
+    suggestion, 
     index,
     isSelected,
     ...delegated
 }) => {
-    let matchIndex;
-    let firstHalf;
-    let secondHalf;
-    //Differentiate between player and team objects
-    if (type === 'player') {
-        matchIndex = suggestion
-        .player_name.toLowerCase()
-        .indexOf(searchValue.toLowerCase())
-        //Determine the index from which the match begins
-        const matchEnd = matchIndex + searchValue.length
-        firstHalf = suggestion.player_name.slice(0, matchEnd);
-        secondHalf = suggestion.player_name.slice(matchEnd);
-    } else {
-        matchIndex = suggestion
-        .team_name.toLowerCase()
-        .indexOf(searchValue.toLowerCase())
-        const matchEnd = matchIndex + searchValue.length
-        firstHalf = suggestion.team_name.slice(0, matchEnd);
-        secondHalf = suggestion.team_name.slice(matchEnd);
-    }
+    console.log(suggestion.model_type)
+    let key;
+    suggestion.model_type === 'player'
+    ? key = suggestion.player_name
+    : key = suggestion.team_name
+
+    const matchIndex = key.toLowerCase().indexOf(searchValue.toLowerCase())
+    const matchEnd = matchIndex + searchValue.length
+    const firstHalf = key.slice(0, matchEnd);
+    const secondHalf = key.slice(matchEnd); 
         
     return (
         <Wrapper
