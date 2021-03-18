@@ -8,7 +8,6 @@ const Suggestion = ({
     isSelected,
     ...delegated
 }) => {
-    console.log(suggestion.model_type)
     let key;
     suggestion.model_type === 'player'
     ? key = suggestion.player_name

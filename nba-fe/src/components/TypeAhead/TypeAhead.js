@@ -3,21 +3,20 @@ import './TypeAhead.css'
 import Suggestion from '../Suggestion/Suggestion'
 import styled from 'styled-components'
 
-const TypeAhead = ({TeamData, PlayerData, handleSelect}) => {
+const TypeAhead = ({TeamData, PlayerData, handleSelect, is_data_visible}) => {
     const [searchTerm, setSearchTerm] = useState('')
     const [isVisible, setIsVisible] = useState(false)
     const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(0)
 
     const rgx = new RegExp(searchTerm.toLowerCase(), "g")
+    const hasEnteredEnoughCharacters = searchTerm.length >= 2;
 
     const teamSuggestions = TeamData.filter(team => {
-        const hasEnteredEnoughCharacters = searchTerm.length >= 2;
         const matchesValue = team.team_name.toLowerCase().match(rgx);
         return hasEnteredEnoughCharacters && matchesValue;
     })
 
     const playerSuggestions = PlayerData.filter(player => {
-        const hasEnteredEnoughCharacters = searchTerm.length >= 2;
         const matchesValue = player.player_name.toLowerCase().match(rgx);
         return hasEnteredEnoughCharacters && matchesValue;
     })
@@ -42,6 +41,7 @@ const TypeAhead = ({TeamData, PlayerData, handleSelect}) => {
                     }}
                     onFocus={() => {
                         setIsVisible(true)
+                        is_data_visible(false)
                     }}
                     onKeyDown={ev => {
                         switch (ev.key) {
@@ -107,7 +107,7 @@ const TypeAhead = ({TeamData, PlayerData, handleSelect}) => {
                 <Suggestions id='results'>
                     {totalSuggestions.map((suggestion, index) => {
                         const isSelected = index === selectedSuggestionIndex;
-                        suggestion = (<Suggestion
+                        const suggestion_data = (<Suggestion
                             key={suggestion.id}
                             suggestion={suggestion}
                             index={index}
@@ -117,26 +117,28 @@ const TypeAhead = ({TeamData, PlayerData, handleSelect}) => {
                                 setSelectedSuggestionIndex(index);
                             }}
                             onMouseDown={() => {
-                                handleSelect(suggestion.team_name);
+                                setIsVisible(false)
+                                is_data_visible(true)
+                                handleSelect(suggestion);
                             }}
                         />)
                         if (teamSuggestions && index === 0) {
                             return (
                                 <>
                                 <dt>Teams</dt>
-                                {suggestion}
+                                {suggestion_data}
                                 </>
                             )
                         } else if (playerSuggestions && index === teamSuggestions.length) {
                             return (
                                 <>
                                 <dt>Players</dt>
-                                {suggestion}
+                                {suggestion_data}
                                 </>
                             ) 
                         } else {
                             return (
-                                suggestion
+                                suggestion_data
                             )
                         }
                     })}
