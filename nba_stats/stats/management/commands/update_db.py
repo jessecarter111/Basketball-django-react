@@ -24,8 +24,8 @@ class Command(BaseCommand):
         # pulls all individual players stats from the 2020 season from bball-reference
         self.populate_teams()
         self.populate_players()
-        Player.objects.refresh_from_db()
-        Team.objects.refresh_from_db()
+        # Player.objects.refresh_from_db()
+        # Team.objects.refresh_from_db()
 
     def populate_players(self):
         data = self.scrape_players()
@@ -51,9 +51,9 @@ class Command(BaseCommand):
                                    field_goals_attempted=p[8], field_goals_pct=p[9], three_pts=p[10],
                                    three_pts_attempted=p[11], three_pts_pct=p[12], two_pts=p[13],
                                    two_pts_attempted=p[14], two_pts_pct=p[15], effective_fg_pct=p[16],
-                                   points=p[17], free_throws=p[18], free_throws_attempted=p[19],
-                                   free_throws_pct=p[20], off_reb=p[21], def_reb=p[22], total_reb=p[23],
-                                   assists=p[24], steals=p[25], blocks=p[26], turnovers=p[27], pers_fouls=p[28])
+                                   free_throws=p[17], free_throws_attempted=p[18],
+                                   free_throws_pct=p[19], off_reb=p[20], def_reb=p[21], total_reb=p[22],
+                                   assists=p[23], steals=p[24], blocks=p[25], turnovers=p[26], pers_fouls=p[27], points=p[28])
                     entry.save()
 
         self.stdout.write(self.style.SUCCESS('Updated/Populated Players'))

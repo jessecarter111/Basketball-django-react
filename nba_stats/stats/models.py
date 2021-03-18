@@ -20,8 +20,8 @@ class Team(models.Model):
     championships = models.IntegerField()
     model_type = models.CharField(default="team", max_length=50)
 
-    def __str__(self) -> str:
-        return self.team_name
+    def __str__(self):
+        return self.team_abrev
 
 
 class Player(models.Model):
@@ -53,7 +53,7 @@ class Player(models.Model):
     two_pts_pct = models.DecimalField(
         max_digits=4, decimal_places=3, default=0)
     effective_fg_pct = models.DecimalField(
-        max_digits=4, decimal_places=1, default=0)
+        max_digits=4, decimal_places=3, default=0)
     points = models.DecimalField(max_digits=4, decimal_places=2, default=0)
     # Free Throws
     free_throws = models.DecimalField(
@@ -78,5 +78,5 @@ class Player(models.Model):
     pers_fouls = models.DecimalField(max_digits=4, decimal_places=2, default=0)
     model_type = models.CharField(default="player", max_length=50)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return self.player_name
