@@ -1,16 +1,14 @@
-import { useState } from 'react';
+import NBAlogo from '../Header/nbalogo.webp'
 
 const Header = () => {
     return (
         <div className="text-center">
         <img
-          src="../NBA-logo.png"
+          src={NBAlogo}
           width="300"
-          className="img-thumbnail"
           alt='NBA Logo'
-          style={{ marginTop: "20px" }}
+          style={{ marginTop: "20px", marginBottom: "15px"}}
         />
-        <hr />
         <h1>NBA Stats</h1>
       </div>
     );

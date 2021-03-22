@@ -3,19 +3,18 @@ import './TypeAhead.css'
 import Suggestion from '../Suggestion/Suggestion'
 import styled from 'styled-components'
 
-const TypeAhead = ({TeamData, PlayerData, handleSelect, is_data_visible}) => {
+const TypeAhead = ({TeamData, PlayerData, handleSelect, toggleIsDataTableVisible}) => {
     const [searchTerm, setSearchTerm] = useState('')
     const [isVisible, setIsVisible] = useState(false)
     const [selectedSuggestionIndex, setSelectedSuggestionIndex] = useState(0)
 
+    //Sort through TeamData,PlayerData to determine searchterm matches if term length >= 2
     const rgx = new RegExp(searchTerm.toLowerCase(), "g")
     const hasEnteredEnoughCharacters = searchTerm.length >= 2;
-
     const teamSuggestions = TeamData.filter(team => {
         const matchesValue = team.team_name.toLowerCase().match(rgx);
         return hasEnteredEnoughCharacters && matchesValue;
     })
-
     const playerSuggestions = PlayerData.filter(player => {
         const matchesValue = player.player_name.toLowerCase().match(rgx);
         return hasEnteredEnoughCharacters && matchesValue;
@@ -25,14 +24,10 @@ const TypeAhead = ({TeamData, PlayerData, handleSelect, is_data_visible}) => {
     const shouldShowSuggestions = totalSuggestions.length > 0 && isVisible
     const numSuggestions = totalSuggestions.length - 1
 
-    const selectedSuggestion = 
-        (selectedSuggestionIndex < teamSuggestions.length)
-        ? teamSuggestions[selectedSuggestionIndex]
-        : playerSuggestions[selectedSuggestionIndex - teamSuggestions.length]
+    const selectedSuggestion = totalSuggestions[selectedSuggestionIndex]
         
     return (
         <Wrapper>
-            <Row>
                 <Input
                     type='text'
                     value={searchTerm}
@@ -41,7 +36,7 @@ const TypeAhead = ({TeamData, PlayerData, handleSelect, is_data_visible}) => {
                     }}
                     onFocus={() => {
                         setIsVisible(true)
-                        is_data_visible(false)
+                        toggleIsDataTableVisible(false)
                     }}
                     onKeyDown={ev => {
                         switch (ev.key) {
@@ -89,40 +84,32 @@ const TypeAhead = ({TeamData, PlayerData, handleSelect, is_data_visible}) => {
                     }}
                     aria-expanded={isVisible}
                     aria-owns="results"
-                    aria-label="Search for a book"
+                    aria-label="Search for a team or player"
                     aria-describedby="typeahead-instructions"
                     aria-activedescendant={
                         selectedSuggestion ? `option-${selectedSuggestion.id}` : undefined
                     }
                 />
-                <ClearButton
-                    onClick={() => {
-                        setSearchTerm('');
-                    }}
-                    >Clear
-                </ClearButton>
-            </Row>
-
             {(shouldShowSuggestions) && (
                 <Suggestions id='results'>
                     {totalSuggestions.map((suggestion, index) => {
                         const isSelected = index === selectedSuggestionIndex;
                         const suggestion_data = (<Suggestion
-                            key={suggestion.id}
-                            suggestion={suggestion}
-                            index={index}
-                            isSelected={isSelected}
-                            searchValue={searchTerm}
+                            key={ suggestion.id }
+                            suggestion={ suggestion }
+                            index={ index }
+                            isSelected={ isSelected }
+                            searchValue={ searchTerm }
                             onMouseEnter={() => {
                                 setSelectedSuggestionIndex(index);
                             }}
                             onMouseDown={() => {
                                 setIsVisible(false)
-                                is_data_visible(true)
+                                toggleIsDataTableVisible(true)
                                 handleSelect(suggestion);
                             }}
                         />)
-                        if (teamSuggestions && index === 0) {
+                        if (teamSuggestions.length > 0 && index === 0) {
                             return (
                                 <>
                                 <dt>Teams</dt>
@@ -155,18 +142,12 @@ const TypeAhead = ({TeamData, PlayerData, handleSelect, is_data_visible}) => {
 
 const Wrapper = styled.div`
     position: relative;
-`;
-
-const Row = styled.div`
     display: flex;
-`;
-
-const ClearButton = styled.button`
-    margin-left: 10px;
+    justify-content: center;
 `;
 
 const Input = styled.input`
-    width: 350px;
+    width: 25%;
     height: 40px;
     padding: 0 12px;
     border: 1px solid #ccc;
@@ -176,9 +157,7 @@ const Input = styled.input`
 
 const Suggestions = styled.div`
     position: absolute;
-    width: 100%;
-    left: 0;
-    right: 0;
+    width: 25%;
     bottom: -10px;
     padding: 10px;
     border-radius: 4px;

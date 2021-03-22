@@ -24,8 +24,6 @@ class Command(BaseCommand):
         # pulls all individual players stats from the 2020 season from bball-reference
         self.populate_teams()
         self.populate_players()
-        # Player.objects.refresh_from_db()
-        # Team.objects.refresh_from_db()
 
     def populate_players(self):
         data = self.scrape_players()

@@ -3,12 +3,14 @@ import { API_PLAYERS_URL, API_TEAMS_URL } from "../../constants"
 import Header from "../Header/Header"
 import TypeAhead from "../TypeAhead/TypeAhead"
 import TeamData from "../TeamData/TeamData"
+import PlayerData from "../PlayerData/PlayerData"
+import styled from 'styled-components'
 
 const App = () => {
     const [teamData, setTeamData] = useState([])
     const [playerData, setPlayerData] = useState([])
     const [selectedData, setSelectedData] = useState({})
-    const [isDataVisible, setIsDataVisible] = useState(false)
+    const [isDataTableVisible, setIsDataTableVisible] = useState(false)
 
     useEffect(() => {
         getTeams()
@@ -27,28 +29,35 @@ const App = () => {
         setPlayerData(data)
     }
 
-    const display_data = () => {
-        return selectedData.model_type === 'team'
-        ?  (<TeamData team={ selectedData }/>)
-        : (<></>)    
+    const displayData = () => {
+        switch(selectedData.model_type) {
+            case "player":
+                return (<PlayerData player={ selectedData }/>)
+                
+            case "team":
+                return (<TeamData team={ selectedData }/>)
+
+            default:
+                return
+        }     
     }
     
-    const is_data_visible = ( truthy ) => {
-        setIsDataVisible(truthy)
+    const toggleIsDataTableVisible = ( truthy ) => {
+        setIsDataTableVisible(truthy)
     }
 
     return (
-        <div>
+        <div className="main">
             <Header/>
             <TypeAhead TeamData={ teamData }
                 PlayerData={ playerData }
                 handleSelect={ suggestion => { 
                    setSelectedData(suggestion)}
                 }
-                is_data_visible={is_data_visible}
+                toggleIsDataTableVisible={ toggleIsDataTableVisible }
             />
-            {selectedData && isDataVisible && (
-                display_data()
+            {selectedData && isDataTableVisible && (
+                displayData()
             )}
         </div>
     )
