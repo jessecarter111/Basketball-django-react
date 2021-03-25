@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from rest_framework import status
 
-from .models import Player
+from .models import Player, Franchise, Team
 from .serializers import *
 
 
@@ -21,7 +21,21 @@ def players_list(request):
 
 
 @api_view(['GET', 'POST'])
-def teams_list(request):
+def franchise_list(request):
+    if request.method == 'GET':
+        data = Franchise.objects.all()
+
+        serializer = FranchiseSerializer(
+            data, context={'request': request}, many=True)
+
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['GET', 'POST'])
+def team_list(request):
     if request.method == 'GET':
         data = Team.objects.all()
 

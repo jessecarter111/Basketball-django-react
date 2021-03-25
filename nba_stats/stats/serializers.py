@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from .models import Team, Player
+from .models import Franchise, Player, Team
 
 
-class TeamSerializer(serializers.ModelSerializer):
+class FranchiseSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Team
-        fields = ('team_name', 'team_abrev', 'league', 'inaug',
+        model = Franchise
+        fields = ('franchise_id', 'franchise_name', 'league', 'inaug',
                   'end', 'years', 'games', 'wins', 'losses', 'w_l_pct',
-                  'playoffs', 'division', 'conference', 'championships', 'model_type')
+                  'playoffs', 'division', 'conference', 'championships')
 
 
 class PlayerSerializer(serializers.ModelSerializer):
@@ -15,6 +15,19 @@ class PlayerSerializer(serializers.ModelSerializer):
         model = Player
         fields = ('player_id', 'player_name', 'draft_year', 'end_year',
                   'position', 'height', 'weight', 'birth_date')
+
+
+class TeamSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Team
+        fields = ('franchise_id', 'team_id', 'season', 'league',
+                  'team_name', 'wins', 'losses', 'w_l_pct',
+                  'finish', 'srs', 'pace', 'relative_pace',
+                  'ortg', 'relative_ortg', 'drtg',
+                  'relative_drtg', 'playoffs', 'coaches',
+                  'top_ws')
+
+
 # class PlayerSerializer(serializers.ModelSerializer):
 #     class Meta:
 #         model = Player
