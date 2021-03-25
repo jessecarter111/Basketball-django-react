@@ -1,7 +1,7 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
 from django.db.models.fields import related
-
+from datetime import datetime
 # Create your models here.
 
 
@@ -69,14 +69,15 @@ class Player_Game(models.Model):
         unique_together = ('player_id', 'date')
 
     # Meta
-    id = models.AutoField(primary_key=True)
     player_id = models.ForeignKey(Player, on_delete=CASCADE)
     game_number = models.IntegerField(default=0)
-    date = models.DateField(default=" ")
+    date = models.DateField(default=datetime.now())
     age = models.CharField(default="0", max_length=7)
-    team_id = models.ForeignKey(Team, on_delete=CASCADE, related_name='team')
-    opponent = models.ForeignKey(
-        Team, on_delete=models.CASCADE, related_name='opponent')
+    season = models.CharField(default='0000-00', max_length=7)
+    team_id = models.ForeignKey(
+        Team, on_delete=CASCADE, related_name='team', default='')
+    opponent_id = models.ForeignKey(
+        Team, on_delete=models.CASCADE, related_name='opponent', default='')
     away_home = models.CharField(default=' ', max_length=1)
     result = models.CharField(default='0', max_length=7)
     started = models.IntegerField(default='0')

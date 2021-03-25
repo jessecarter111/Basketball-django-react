@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Franchise, Player, Team
+from .models import Franchise, Player, Team, Player_Game
 
 
 class FranchiseSerializer(serializers.ModelSerializer):
@@ -28,12 +28,15 @@ class TeamSerializer(serializers.ModelSerializer):
                   'top_ws')
 
 
-# class PlayerSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Player
-#         fields = ('player_name', 'position', 'age', 'team', 'games', 'games_started',
-#                   'minutes_played', 'field_goals', 'field_goals_attempted', 'field_goals_pct',
-#                   'three_pts', 'three_pts_attempted', 'three_pts_pct', 'two_pts', 'two_pts_attempted',
-#                   'two_pts_pct', 'effective_fg_pct', 'points', 'free_throws', 'free_throws_attempted',
-#                   'free_throws_pct', 'off_reb', 'def_reb', 'total_reb', 'assists', 'steals', 'blocks',
-#                   'turnovers', 'pers_fouls', 'model_type')
+class Player_GameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player_Game
+        fields = ('player_id', 'game_number', 'season', 'date', 'age',
+                  'team_id', 'opponent_id', 'away_home', 'result',
+                  'started', 'minutes_played', 'field_goals',
+                  'field_goals_attempted', 'field_goals_pct',
+                  'three_pts', 'three_pts_attempted', 'three_pts_pct',
+                  'points', 'free_throws', 'free_throws_attempted',
+                  'free_throws_pct', 'off_reb', 'def_reb', 'total_reb',
+                  'assists', 'steals', 'blocks', 'turnovers', 'pers_fouls',
+                  'game_score', 'plus_minus', 'dnp')

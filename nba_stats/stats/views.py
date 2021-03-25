@@ -46,3 +46,14 @@ def team_list(request):
 
     elif request.method == 'POST':
         return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+
+@api_view(['GET'])
+def player_game_list(request):
+    if request.method == 'GET':
+        data = Player_Game.objects.all()
+
+        serializer = Player_GameSerializer(
+            data, context={'request': request}, many=True)
+
+        return Response(serializer.data)

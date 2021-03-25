@@ -22,5 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     re_path(r'^api/players/$', views.players_list),
     re_path(r'^api/franchises/$', views.franchise_list),
-    re_path(r'^api/teams/$', views.team_list)
+    re_path(r'^api/teams/$', views.team_list),
+    re_path(r'^api/games/$', views.player_game_list)
 ]

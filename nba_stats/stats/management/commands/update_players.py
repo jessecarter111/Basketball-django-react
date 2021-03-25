@@ -61,6 +61,11 @@ class Command(BaseCommand):
             player_stats = [[td.getText() for td in rows[i].findAll('td')]
                             for i in range(len(rows))]
 
+            # Need to scrub player names as some have * indicating they have
+            # been an All-Star
+            for i in range(len(player_names)):
+                player_names[i] = [player_names[i][0].replace('*', '')]
+
             for i in range(len(rows)):
                 player_stats[i] = player_names[i] + player_stats[i]
             player_list += player_stats

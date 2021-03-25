@@ -8,13 +8,25 @@ class Command(BaseCommand):
     args = '<foo bar ...>'
     help = 'Scrapes bball-ref for players stats, adds them to the db if they aren\'t already in there'
 
+    team_urls = {'Atlanta Hawks': 'ATL', 'Boston Celtics': 'BOS', 'Brooklyn Nets': 'NJN',
+                 'Charlotte Hornets': 'CHA', 'Chicago Bulls': 'CHI', 'Cleveland Cavaliers': 'CLE',
+                 'Dallas Mavericks': 'DAL', 'Denver Nuggets': 'DEN', 'Detroit Pistons': 'DET',
+                 'Golden State Warriors': 'GSW', 'Houston Rockets': 'HOU', 'Indiana Pacers': 'IND',
+                 'Los Angeles Clippers': 'LAC', 'Los Angeles Lakers': 'LAL', 'Memphis Grizzlies': 'MEM',
+                 'Miami Heat': 'MIA', 'Milwaukee Bucks': 'MIL', 'Minnesota Timberwolves': 'MIN',
+                 'New Orleans Pelicans': 'NOH', 'New York Knicks': 'NYK', 'Oklahoma City Thunder': 'OKC',
+                 'Orlando Magic': 'ORL', 'Philadelphia 76ers': 'PHI', 'Phoenix Suns': 'PHO',
+                 'Portland Trail Blazers': 'POR', 'Sacramento Kings': 'SAC', 'San Antonio Spurs': 'SAS',
+                 'Toronto Raptors': 'TOR', 'Utah Jazz': 'UTA', 'Washington Wizards': 'WAS'}
+
     team_codes = {'Atlanta Hawks': 'ATL', 'Boston Celtics': 'BOS', 'Brooklyn Nets': 'BRK',
-                  'Charlotte Hornets': 'CHO', 'Chicago Bulls': 'CHI', 'Cleveland Cavaliers': 'CLE',
-                  'Dallas Mavericks': 'DAL', 'Denver Nuggets': 'DEN', 'Detroit Pistons': 'DET',
-                  'Golden State Warriors': 'GSW', 'Houston Rockets': 'HOU', 'Indiana Pacers': 'IND',
-                  'Los Angeles Clippers': 'LAC', 'Los Angeles Lakers': 'LAL', 'Memphis Grizzlies': 'MEM',
-                  'Miami Heat': 'MIA', 'Milwaukee Bucks': 'MIL', 'Minnesota Timberwolves': 'MIN',
-                  'New Orleans Pelicans': 'NOP', 'New York Knicks': 'NYK', 'Oklahoma City Thunder': 'OKC',
+                  'Charlotte Hornets': 'CHO', 'Charlotte Bobcats': 'CHA', 'Chicago Bulls': 'CHI',
+                  'Cleveland Cavaliers': 'CLE', 'Dallas Mavericks': 'DAL', 'Denver Nuggets': 'DEN',
+                  'Detroit Pistons': 'DET', 'Golden State Warriors': 'GSW', 'Houston Rockets': 'HOU',
+                  'Indiana Pacers': 'IND', 'Los Angeles Clippers': 'LAC', 'Los Angeles Lakers': 'LAL',
+                  'Memphis Grizzlies': 'MEM', 'Miami Heat': 'MIA', 'Milwaukee Bucks': 'MIL',
+                  'Minnesota Timberwolves': 'MIN', 'New Orleans Pelicans': 'NOP', 'New Orleans Hornets': 'NOH',
+                  'New York Knicks': 'NYK', 'Oklahoma City Thunder': 'OKC', 'New Jersey Nets': 'NJN',
                   'Orlando Magic': 'ORL', 'Philadelphia 76ers': 'PHI', 'Phoenix Suns': 'PHO',
                   'Portland Trail Blazers': 'POR', 'Sacramento Kings': 'SAC', 'San Antonio Spurs': 'SAS',
                   'Toronto Raptors': 'TOR', 'Utah Jazz': 'UTA', 'Washington Wizards': 'WAS'}
@@ -27,20 +39,26 @@ class Command(BaseCommand):
         Team.objects.all().delete()
         # team_codes contains a mapping of all active team names and
         # their abbreviations used by bball reference
-        for team in self.team_codes.keys():
+        for team in self.team_urls.keys():
             url = 'https://www.basketball-reference.com/teams/' + \
-                self.team_codes[team]
+                self.team_urls[team]
             # we need to link each team_season to it's corresponding
             # franchise, so we pull the franchise object that matches the
             # the team name
+            print(url)
             franchise = Franchise.objects.get(franchise_name=team)
             try:
                 team_data = self.scrape_franchise_seasons(url)
             except:
-                print(url)
+                self.stdout.write(self.style.ERROR(
+                    "Bad Url:", url))
 
             for season in team_data:
-                id = self.generate_team_id(team, season[0])
+                # Bball reference includes *
+                season[2] = season[2].replace('*', '')
+
+                id = self.generate_team_id(season[2], season[0])
+                print(id)
                 if not Team.objects.filter(team_id=id).exists():
                     team_season_entry = Team(team_id=id, franchise_id=franchise, season=season[0],
                                              league=season[1], team_name=season[2], wins=season[3],
