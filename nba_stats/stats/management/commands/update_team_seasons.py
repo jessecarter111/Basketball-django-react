@@ -45,7 +45,6 @@ class Command(BaseCommand):
             # we need to link each team_season to it's corresponding
             # franchise, so we pull the franchise object that matches the
             # the team name
-            print(url)
             franchise = Franchise.objects.get(franchise_name=team)
             try:
                 team_data = self.scrape_franchise_seasons(url)
@@ -58,7 +57,6 @@ class Command(BaseCommand):
                 season[2] = season[2].replace('*', '')
 
                 id = self.generate_team_id(season[2], season[0])
-                print(id)
                 if not Team.objects.filter(team_id=id).exists():
                     team_season_entry = Team(team_id=id, franchise_id=franchise, season=season[0],
                                              league=season[1], team_name=season[2], wins=season[3],
@@ -96,4 +94,4 @@ class Command(BaseCommand):
 
         # the first column of the data frame x[0] corresponds to the season
         # so we just need to filter out any team records prior to 2010
-        return list(filter(lambda x: int(x[0][:4]) >= 2010, team_stats))
+        return list(filter(lambda x: int(x[0][:4]) >= 2019, team_stats))

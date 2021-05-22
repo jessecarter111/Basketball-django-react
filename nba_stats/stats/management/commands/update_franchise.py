@@ -15,10 +15,11 @@ class Command(BaseCommand):
 
     def populate_franchises(self):
         franchises = self.scrape_franchises()
+        Franchise.objects.all().delete()
         for franchise in franchises:
             id = self.generate_franchise_id(franchise[0], franchise[2])
             # Checks for existing entries to prevent duplicates
-            if not Franchise.objects.filter(franchise_id=id).exists():
+            if not Franchise.objects.filter(franchise_name=franchise[0]).exists():
                 franchise_entry = Franchise(franchise_id=id, franchise_name=franchise[0],
                                             league=franchise[1], inaug=franchise[2], end=franchise[3],
                                             years=franchise[4], games=franchise[5], wins=franchise[6],

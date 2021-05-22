@@ -6,7 +6,7 @@ from datetime import datetime
 
 
 class Franchise(models.Model):
-    franchise_id = models.CharField(primary_key=True, max_length=10)
+    franchise_id = models.CharField(primary_key=True, max_length=100)
     franchise_name = models.CharField(max_length=50)
     league = models.CharField(max_length=8)
     inaug = models.CharField(max_length=7)
@@ -58,7 +58,7 @@ class Player(models.Model):
     position = models.CharField(max_length=5, null=True)
     height = models.CharField(max_length=4, null=True)
     weight = models.IntegerField(null=True)
-    birth_date = models.CharField(max_length=10, default='')
+    birth_date = models.CharField(max_length=30, default='')
 
     def __str__(self):
         return self.player_name
@@ -69,7 +69,8 @@ class Player_Game(models.Model):
         unique_together = ('player_id', 'date')
 
     # Meta
-    player_id = models.ForeignKey(Player, on_delete=CASCADE)
+    player_id = models.ForeignKey(
+        Player, related_name='players', on_delete=CASCADE)
     game_number = models.IntegerField(default=0)
     date = models.DateField(default=datetime.now())
     age = models.CharField(default="0", max_length=7)

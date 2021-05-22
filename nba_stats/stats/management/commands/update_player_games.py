@@ -24,6 +24,8 @@ class Command(BaseCommand):
                     start_season = 2020
                     player_records = self.scrape_player_season_data(
                         player.player_name, start_season, player.end_year)
+                    self.stdout.write(self.style.SUCCESS(
+                        'Succesfully got ' + player.player_name + ' records'))
                 except Exception as e:
                     print(e)
                     self.stdout.write(self.style.ERROR(
@@ -45,9 +47,13 @@ class Command(BaseCommand):
                                     away_home=game[6], opponent_id=opponent, result=game[8],
                                     dnp=game[9]).save()
                     except Exception as e:
+                        self.stdout.write(self.style.ERROR(
+                            '*************************************************'))
                         print("DNP")
                         print(len(game), game)
                         self.stdout.write(self.style.ERROR(e))
+                        self.stdout.write(self.style.ERROR(
+                            '*************************************************'))
                 else:
                     # If len > 10 the Player dressed so all stats are available
                     try:
@@ -69,9 +75,16 @@ class Command(BaseCommand):
                             game_score=game[29], plus_minus=game[30]).save()
 
                     except Exception as e:
+                        self.stdout.write(self.style.ERROR(
+                            '*************************************************'))
                         print("Played")
                         print(len(game), game)
                         self.stdout.write(self.style.ERROR(e))
+                        self.stdout.write(self.style.ERROR(
+                            '*************************************************'))
+
+            self.stdout.write(self.style.SUCCESS(
+                'Succesfully added ' + player.player_name + ' records'))
         self.stdout.write(self.style.SUCCESS('Updated/Populated Player Games'))
 
     def scrape_player_season_data(self, player_name, start_season, end_season):
@@ -125,7 +138,7 @@ class Command(BaseCommand):
             # as there may be collisions in endpoints ex. 'Randy Allen'
             # and 'Ray Allen' both result in 'allenra'
             player_page = soup.find('h1', itemprop="name").getText().strip()
-            if clean_name(player_page) == player_name:
+            if clean_name(player_page) == clean_name(player_name):
                 return url
             id_num += 1
 

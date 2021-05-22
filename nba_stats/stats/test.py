@@ -1,5 +1,6 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
+from basketball_reference_scraper.players import get_stats, get_game_logs, get_player_headshot
 
 
 def scrape_player_season_data(player_name):
@@ -72,4 +73,7 @@ def get_player_url_endpoint(player_name, num):
     return url_endpoint.lower()
 
 
-scrape_player_season_data('Ray Allen')
+# scrape_player_season_data('Ray Allen')
+
+stats = get_game_logs('Ray Allen', '2010-01-01', '2014-04-01', False)
+print(stats)

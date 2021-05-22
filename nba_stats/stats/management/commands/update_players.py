@@ -10,7 +10,7 @@ class Command(BaseCommand):
     help = 'Scrapes bball-ref for players stats, adds them to the db if they aren\'t already in there'
 
     def handle(self, *args, **options):
-        # Pulls all individual player entries for any active players in years >= 2010
+        # Pulls all individual player entries for any active players in years >= 2019
         self.populate_players()
 
     def populate_players(self):
@@ -22,15 +22,20 @@ class Command(BaseCommand):
             # Verify the size of the data frame and that the player was active
             # in 2010 at the earliest, otherwise we don't need to include them
             # p[2] corresponds to the players most recent active year.
-            if int(p[2]) >= 2010:
+            if int(p[2]) >= 2020:
                 try:
                     id_string = self.generate_player_id(p[0], p[1])
                     if not Player.objects.filter(player_id=id_string).exists():
                         entry = Player(player_id=id_string, player_name=p[0], draft_year=p[1],
                                        end_year=p[2], position=p[3], height=p[4], weight=p[5], birth_date=p[6])
                         entry.save()
-                except:
+                except Exception as e:
+                    self.stdout.write(self.style.ERROR(
+                        '*************************************************'))
                     self.stdout.write(self.style.ERROR(p))
+                    self.stdout.write(self.style.ERROR(e))
+                    self.stdout.write(self.style.ERROR(
+                        '*************************************************'))
 
         self.stdout.write(self.style.SUCCESS('Updated/Populated Players'))
 

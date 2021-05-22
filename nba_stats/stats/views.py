@@ -49,11 +49,25 @@ def team_list(request):
 
 
 @api_view(['GET'])
-def player_game_list(request):
+def player_game_list(request, **kwargs):
     if request.method == 'GET':
-        data = Player_Game.objects.all()
+        player = kwargs['player_id']
+        season = kwargs['season']
+        data = Player_Game.objects.filter(player_id=player, season=season)
 
         serializer = Player_GameSerializer(
+            data, context={'request': request}, many=True)
+
+        return Response(serializer.data)
+
+
+@api_view(['GET'])
+def franchise_seasons(request, **kwargs):
+    if request.method == 'GET':
+        fracnhise = kwargs['franchise_id']
+        data = Team.objects.filter(franchise_id=fracnhise)
+
+        serializer = TeamSerializer(
             data, context={'request': request}, many=True)
 
         return Response(serializer.data)

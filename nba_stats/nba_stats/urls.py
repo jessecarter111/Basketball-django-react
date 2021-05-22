@@ -23,5 +23,8 @@ urlpatterns = [
     re_path(r'^api/players/$', views.players_list),
     re_path(r'^api/franchises/$', views.franchise_list),
     re_path(r'^api/teams/$', views.team_list),
-    re_path(r'^api/games/$', views.player_game_list)
+    re_path(r'^api/games/(?P<player_id>.+)/(?P<season>.+)/$',
+            views.player_game_list),
+    re_path(r'^api/franchise/(?P<franchise_id>.+)/$',
+            views.franchise_seasons)
 ]

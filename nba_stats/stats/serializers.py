@@ -10,13 +10,6 @@ class FranchiseSerializer(serializers.ModelSerializer):
                   'playoffs', 'division', 'conference', 'championships')
 
 
-class PlayerSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Player
-        fields = ('player_id', 'player_name', 'draft_year', 'end_year',
-                  'position', 'height', 'weight', 'birth_date')
-
-
 class TeamSerializer(serializers.ModelSerializer):
     class Meta:
         model = Team
@@ -31,7 +24,7 @@ class TeamSerializer(serializers.ModelSerializer):
 class Player_GameSerializer(serializers.ModelSerializer):
     class Meta:
         model = Player_Game
-        fields = ('player_id', 'game_number', 'season', 'date', 'age',
+        fields = ['player_id', 'game_number', 'season', 'date', 'age',
                   'team_id', 'opponent_id', 'away_home', 'result',
                   'started', 'minutes_played', 'field_goals',
                   'field_goals_attempted', 'field_goals_pct',
@@ -39,4 +32,11 @@ class Player_GameSerializer(serializers.ModelSerializer):
                   'points', 'free_throws', 'free_throws_attempted',
                   'free_throws_pct', 'off_reb', 'def_reb', 'total_reb',
                   'assists', 'steals', 'blocks', 'turnovers', 'pers_fouls',
-                  'game_score', 'plus_minus', 'dnp')
+                  'game_score', 'plus_minus', 'dnp']
+
+
+class PlayerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Player
+        fields = ['player_id', 'player_name', 'draft_year', 'end_year',
+                  'position', 'height', 'weight', 'birth_date']
