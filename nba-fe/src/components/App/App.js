@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { API_PLAYERS_URL, API_TEAMS_URL } from "../../constants"
+import { API_PLAYERS_URL, API_TEAMS_URL } from "../../constants/constants"
 import Header from "../Header/Header"
 import TypeAhead from "../TypeAhead/TypeAhead"
 import TeamData from "../TeamData/TeamData"
@@ -30,16 +30,9 @@ const App = () => {
     }
 
     const displayData = () => {
-        switch(selectedData.model_type) {
-            case "player":
-                return (<PlayerData player={ selectedData }/>)
-                
-            case "team":
-                return (<TeamData team={ selectedData }/>)
-
-            default:
-                return
-        }     
+        return ("player_name" in selectedData)
+        ?  (<PlayerData player={ selectedData }/>)
+        :  (<TeamData team={ selectedData }/>)   
     }
     
     const toggleIsDataTableVisible = ( truthy ) => {
@@ -49,7 +42,8 @@ const App = () => {
     return (
         <div className="main">
             <Header/>
-            <TypeAhead TeamData={ teamData }
+            <TypeAhead 
+                TeamData={ teamData }
                 PlayerData={ playerData }
                 handleSelect={ suggestion => { 
                    setSelectedData(suggestion)}

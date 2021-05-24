@@ -12,13 +12,15 @@ const TypeAhead = ({TeamData, PlayerData, handleSelect, toggleIsDataTableVisible
     const rgx = new RegExp(searchTerm.toLowerCase(), "g")
     const hasEnteredEnoughCharacters = searchTerm.length >= 2;
     const teamSuggestions = TeamData.filter(team => {
-        const matchesValue = team.team_name.toLowerCase().match(rgx);
+        const matchesValue = team.franchise_name.toLowerCase().match(rgx);
         return hasEnteredEnoughCharacters && matchesValue;
     })
+    console.log("TypeAhead: ")
+    console.log(teamSuggestions)
     const playerSuggestions = PlayerData.filter(player => {
         const matchesValue = player.player_name.toLowerCase().match(rgx);
         return hasEnteredEnoughCharacters && matchesValue;
-    })
+    }).slice(0, 8)
     
     const totalSuggestions = teamSuggestions.concat(playerSuggestions)
     const shouldShowSuggestions = totalSuggestions.length > 0 && isVisible

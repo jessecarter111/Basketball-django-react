@@ -29,8 +29,8 @@ const TeamData = ({ team }) => {
                             </td>
                         </tr> 
                     ) : ( 
-                        <tr key={team.team_name}>
-                            <td>{team.team_abrev}</td>
+                        <tr key={team.franchise_name}>
+                            <td>{team.franchise_name}</td>
                             <td>{team.league}</td>
                             <td>{team.inaug}</td>
                             <td>{team.years}</td>

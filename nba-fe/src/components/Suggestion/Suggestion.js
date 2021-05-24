@@ -9,10 +9,11 @@ const Suggestion = ({
     ...delegated
 }) => {
     let key;
-    suggestion.model_type === 'player'
+    //Suggestion is either a player obj with "player_name" or franchise
+    //obj with "franchise_name"
+    "player_name" in suggestion
     ? key = suggestion.player_name
-    : key = suggestion.team_name
-
+    : key = suggestion.franchise_name
     const matchIndex = key.toLowerCase().indexOf(searchValue.toLowerCase())
     const matchEnd = matchIndex + searchValue.length
     const firstHalf = key.slice(0, matchEnd);

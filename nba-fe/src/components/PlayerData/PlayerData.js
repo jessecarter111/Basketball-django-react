@@ -1,6 +1,6 @@
 import { Table } from 'reactstrap'
 import styled from 'styled-components'
-
+//TODO: Add age calculator, send full record of player games
 const PlayerData = ({ player }) => {
     return (
         <Container>
