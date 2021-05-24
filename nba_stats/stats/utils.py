@@ -1,8 +1,10 @@
 import unicodedata as ud
 import re
 
+THREE_POINT_INCLUSION_YEAR = 1979
 
-def rmdiacritics(char):
+
+def removediacritics(char: str) -> str:
     '''
     Return the base character of char, by "removing" any
     diacritics like accents or curls and strokes and the like.
@@ -18,12 +20,9 @@ def rmdiacritics(char):
     return char
 
 
-def clean_name(name):
+def clean_name(name: str) -> str:
     regex = re.compile('[,\.!?\']')
     name = regex.sub('', name)
     for i in range(len(name)):
-        name = name.replace(name[i], rmdiacritics(name[i]))
-    return name
-
-
-THREE_POINT_INCLUSION_YEAR = 1979
+        name = name.replace(name[i], removediacritics(name[i]))
+    return name.lower()

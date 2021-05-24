@@ -3,7 +3,7 @@ from ... models import Player, Team, Player_Game
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
 from ... utils import clean_name
-
+import traceback
 
 class Command(BaseCommand):
     args = '<foo bar ...>'
@@ -21,15 +21,15 @@ class Command(BaseCommand):
         for player in Player.objects.all():
             if player.end_year >= 2020:
                 try:
-                    start_season = 2020
+                    start_season = 2020 if player.draft_year <= 2020 else player.draft_year
                     player_records = self.scrape_player_season_data(
-                        player.player_name, start_season, player.end_year)
+                        player, start_season, player.end_year)
                     self.stdout.write(self.style.SUCCESS(
-                        'Succesfully got ' + player.player_name + ' records'))
+                        'Succesfully scrapped ' + player.player_name + ' records'))
                 except Exception as e:
-                    print(e)
+                    print(traceback.format_exc())
                     self.stdout.write(self.style.ERROR(
-                        'Failed to get ' + player.player_name + ' records'))
+                        'Failed to scrape ' + player.player_name + ' records'))
                     continue
             else:
                 continue
@@ -87,8 +87,9 @@ class Command(BaseCommand):
                 'Succesfully added ' + player.player_name + ' records'))
         self.stdout.write(self.style.SUCCESS('Updated/Populated Player Games'))
 
-    def scrape_player_season_data(self, player_name, start_season, end_season):
-        url = self.get_correct_player_page(player_name)[:-5] + "/gamelog/"
+    def scrape_player_season_data(self, player: Player, start_season: int, end_season: int) -> list:
+        player_last_name = clean_name(player.player_name.split(' ')[1])
+        url = 'https://www.basketball-reference.com/players/' + player_last_name[0].lower() + '/' + player.csv_endpoint + "/gamelog/"
         season_to_scrape = start_season
         player_logs = []
         while season_to_scrape <= end_season:
@@ -97,13 +98,18 @@ class Command(BaseCommand):
             # as they are of the form 'atl_2020-21'
             season_id = str(season_to_scrape - 1) + '-' + \
                 str(season_to_scrape)[-2:]
-
             season_url = url + str(season_to_scrape)
-            html = urlopen(season_url)
-            soup = BeautifulSoup(html, features="html.parser")
-            table2 = soup.find('table', id="pgl_basic")
-            rows = table2.findAll('tr')[1:]
 
+            try:
+                html = urlopen(season_url)
+                soup = BeautifulSoup(html, features="html.parser")
+                table2 = soup.find('table', id="pgl_basic")    
+                rows = table2.findAll('tr')[1:]
+            except Exception as e:
+                self.stdout.write(self.style.ERROR(f"Invalid: {season_url}"))
+                season_to_scrape += 1
+                continue
+            
             game_numbers = [[th.getText() for th in rows[i].findAll('th', {"data-stat": "ranker"})]
                             for i in range(len(rows))]
 
@@ -113,54 +119,9 @@ class Command(BaseCommand):
             for i in range(len(game_numbers)):
                 game_numbers[i] = [season_id] + game_numbers[i]
                 game_numbers[i] += game_stats[i]
-
+            
             player_logs += game_numbers
             season_to_scrape += 1
 
         player_logs = [log for log in player_logs if len(log) > 2]
-
         return player_logs
-
-    def get_correct_player_page(self, player_name):
-        id_num = 1
-        match = False
-        while not match:
-            player_endpoint = self.get_player_url_endpoint(player_name, id_num)
-            try:
-                url = 'https://www.basketball-reference.com/players/' + player_endpoint
-                html = urlopen(url)
-            except:
-                self.stdout.write(self.style.ERROR(url))
-                return False
-
-            soup = BeautifulSoup(html, features="html.parser")
-            # Verify that the current page is the correct player page
-            # as there may be collisions in endpoints ex. 'Randy Allen'
-            # and 'Ray Allen' both result in 'allenra'
-            player_page = soup.find('h1', itemprop="name").getText().strip()
-            if clean_name(player_page) == clean_name(player_name):
-                return url
-            id_num += 1
-
-        return False
-
-    def get_player_url_endpoint(self, player_name, num):
-        first_name, last_name = player_name.split(' ')
-        # Need to remove diacritics from frist and last name
-        # as the basketball reference urls only contain
-        # regular ascii chars
-        first_name = clean_name(first_name)
-        last_name = clean_name(last_name)
-
-        url_endpoint = last_name[0] + '/'
-        digit_id = '0' + str(num)
-
-        # Player url endpoints are of the form 'allenra01' taking up to
-        # the first 5 letters of their last name and the first 2 letters of
-        # their first name + a numerical indicator in case of collisions.
-        if len(last_name) < 5:
-            url_endpoint += last_name + first_name[:2] + digit_id + '.html'
-        else:
-            url_endpoint += last_name[:5] + first_name[:2] + digit_id + '.html'
-
-        return url_endpoint.lower()

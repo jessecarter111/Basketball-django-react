@@ -82,8 +82,8 @@ WSGI_APPLICATION = 'nba_stats.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'nbastats',
-        'USER': 'postgres',
+        'NAME': 'NBA_Stats_DB',
+        'USER': 'jesse',
         'PASSWORD': keys.PG_PW,
         'HOST': 'localhost',
         'PORT': '5432',

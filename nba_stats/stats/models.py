@@ -1,8 +1,6 @@
 from django.db import models
 from django.db.models.deletion import CASCADE
-from django.db.models.fields import related
 from datetime import datetime
-# Create your models here.
 
 
 class Franchise(models.Model):
@@ -59,7 +57,8 @@ class Player(models.Model):
     height = models.CharField(max_length=4, null=True)
     weight = models.IntegerField(null=True)
     birth_date = models.CharField(max_length=30, default='')
-
+    csv_endpoint = models.CharField(max_length=11, default='')
+    
     def __str__(self):
         return self.player_name
 

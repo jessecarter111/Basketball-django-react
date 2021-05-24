@@ -20,14 +20,15 @@ class Command(BaseCommand):
 
         for p in player_data:
             # Verify the size of the data frame and that the player was active
-            # in 2010 at the earliest, otherwise we don't need to include them
+            # in 2020 at the earliest, otherwise we don't need to include them
             # p[2] corresponds to the players most recent active year.
             if int(p[2]) >= 2020:
                 try:
                     id_string = self.generate_player_id(p[0], p[1])
                     if not Player.objects.filter(player_id=id_string).exists():
                         entry = Player(player_id=id_string, player_name=p[0], draft_year=p[1],
-                                       end_year=p[2], position=p[3], height=p[4], weight=p[5], birth_date=p[6])
+                                       end_year=p[2], position=p[3], height=p[4], weight=p[5], 
+                                       birth_date=p[6], csv_endpoint=p[8])
                         entry.save()
                 except Exception as e:
                     self.stdout.write(self.style.ERROR(
@@ -62,7 +63,8 @@ class Command(BaseCommand):
             # the names and data seperately then concatenate them
             player_names = [[th.getText() for th in rows[i].findAll('th')]
                             for i in range(len(rows))]
-
+            player_endpoints = [[th.get('data-append-csv') for th in rows[i].findAll('th')]
+                            for i in range(len(rows))]
             player_stats = [[td.getText() for td in rows[i].findAll('td')]
                             for i in range(len(rows))]
 
@@ -72,7 +74,9 @@ class Command(BaseCommand):
                 player_names[i] = [player_names[i][0].replace('*', '')]
 
             for i in range(len(rows)):
-                player_stats[i] = player_names[i] + player_stats[i]
+                player_stats[i] = player_names[i] + player_stats[i] + player_endpoints[i]
+                print(player_stats[i])
+                
             player_list += player_stats
 
         return player_list

@@ -42,7 +42,7 @@ class Command(BaseCommand):
         for team in self.team_urls.keys():
             url = 'https://www.basketball-reference.com/teams/' + \
                 self.team_urls[team]
-            # we need to link each team_season to it's corresponding
+            # we need to link each team_season to its corresponding
             # franchise, so we pull the franchise object that matches the
             # the team name
             franchise = Franchise.objects.get(franchise_name=team)
